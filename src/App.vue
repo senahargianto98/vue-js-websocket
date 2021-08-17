@@ -1,8 +1,13 @@
 <template>
   <div id="app">
-    <div v-for="message in messages" :key="message.text">
-      <h1
-      >{{ message.text }}</h1>
+    <div v-for="txt in messages" :key="txt.id">
+      <div v-for="txt1 in txt" :key="txt1.id">
+        <div v-for="txt2 in txt1" :key="txt2.id">
+          <div v-for="txt3 in txt2" :key="txt3.id">
+            {{ txt3.message }}
+          </div>
+        </div>
+      </div>
     </div>
 
     <form @submit.prevent="submit">
@@ -12,17 +17,11 @@
             class="input"
             type="text"
             placeholder="Type a message"
-            v-model="newMessage"
+            v-model="message"
           />
         </div>
         <div class="control">
-          <button
-            type="submit"
-            class="button is-danger"
-            :disabled="!newMessage"
-          >
-            Send
-          </button>
+          <button type="submit" class="button is-danger">Send</button>
         </div>
       </div>
     </form>
@@ -40,13 +39,13 @@ export default {
   data() {
     return {
       messages: [],
-      newMessage: "",
+      message: "",
     };
   },
   mounted() {
-    Echo.channel("channel").listen("NewChatMessage", (e) => {
+    window.Echo.channel("channel").listen("Hello", (e) => {
       this.messages.push({
-        text: e.message,
+        text: e,
       });
     });
   },
@@ -54,19 +53,11 @@ export default {
     submit() {
       axios
         .post(`http://localhost:8000/api/test`, {
-          message: this.newMessage,
+          message: this.message,
         })
         .then(
-          (response) => {
-            this.messages.push({
-              text: this.newMessage,
-            });
-
-            this.newMessage = "";
-          },
-          (error) => {
-            console.log(error);
-          }
+          axios
+          .get('http://localhost:8000/api/testing')
         );
     },
   },
